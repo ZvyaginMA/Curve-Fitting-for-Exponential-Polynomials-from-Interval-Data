@@ -1,7 +1,7 @@
 import numpy as np
 from tol_func import Tol
 from solver import Solve
-
+from optimization_methods import ralgb5_with_proj
 import unittest
 
 class TestSolver(unittest.TestCase):
@@ -24,10 +24,10 @@ class TestSolver(unittest.TestCase):
         quantity_exp = 2
         lb = np.ones(quantity_exp * 2)
         ub = 2 * np.ones(quantity_exp * 2)
-        quantity_starts = 100
+        quantity_starts = 10
 
         # Запускаем мультистарт
-        res = solver.multistart(lb, ub, quantity_starts, return_all_data=False)
+        res = solver.multistart(lb, ub, quantity_starts, ralgb5_with_proj ,return_all_data=False)
 
         self.assertTrue(res[0] > 0.09) #Проверка ходимости
         self.assertTrue(res[-1] == 3) # Проверка кода остановки

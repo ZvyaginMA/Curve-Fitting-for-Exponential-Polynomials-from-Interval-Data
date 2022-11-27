@@ -61,7 +61,14 @@ def subGradDes(calcfg, x_0, rad_search, maxiter=100, tolx=1e-12, tolg=1e-12, tol
 
 
 def ralgb5_with_proj(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h0=1, nh=3, q1=0.9, q2=1.1, tolx=1e-12, tolg=1e-12, tolf=1e-12):
-
+    """
+        exit_code =
+        0 - старт программы
+        1 - остановка по f
+        2 - остановка по g
+        3 - остановка по x
+        4 - остановка по iter
+    """
     m = len(x0)
     hs = h0
     B = np.eye(m)
@@ -147,7 +154,14 @@ def ralgb5_with_proj(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h
 
 
 def ralgb5(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h0=1, nh=3, q1=0.9, q2=1.1, tolx=1e-12, tolg=1e-12, tolf=1e-12):
-
+    """
+        exit_code =
+        0 - старт программы
+        1 - остановка по f
+        2 - остановка по g
+        3 - остановка по x
+        4 - остановка по iter
+    """
     m = len(x0)
     hs = h0
     B = np.eye(m)

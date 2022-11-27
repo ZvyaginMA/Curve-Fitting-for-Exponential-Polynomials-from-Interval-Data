@@ -2,12 +2,13 @@ import unittest
 
 import numpy as np
 import matplotlib.pyplot as plt
-from tol_func import Tol
+from tol_func_mod import Tol_with_cost
 import graw
 from solver import Solve
 from examples.examples import *
-from tests.tests_tol_func import *
-
+from tests.test_optimization import *
+from optimization_methods import ralgb5
 
 if __name__ == '__main__':
-  example_1()
+  example1()
+

@@ -6,7 +6,7 @@ class Solve:
   def __init__(self, tol):
     self.tol = tol
 
-  def multistart(self,  lb, ub, quantity_starts, return_all_data=True):
+  def multistart(self,  lb, ub, quantity_starts, method, return_all_data=True):
     def calcfg(x):
       a, b = x[:len(x) // 2], x[len(x) // 2:]
       return - self.tol.tol_value(a, b), np.concatenate(
@@ -18,7 +18,7 @@ class Solve:
       X[:, i] = (np.random.uniform(lb[i], ub[i], (quantity_starts)))
 
     for x in X:
-      res.append(self.optimization(calcfg, x))
+      res.append(self.optimization(calcfg, method, x))
       if res[-1][0] > best_res[0]:
         best_res = res[-1]
 
@@ -27,7 +27,7 @@ class Solve:
     else:
       return best_res
 
-  def optimization(self, calcfg, x_0):
-    xr, fr, nit, ncalls, ccode = ralgb5_with_proj(calcfg, x_0) #2.9, 3.9,
+  def optimization(self, calcfg, method , x_0):
+    xr, fr, nit, ncalls, ccode = method(calcfg, x_0) #2.9, 3.9,
     a, b = xr[:len(xr) // 2], xr[len(xr) // 2:]
     return ( - fr, a, b,ccode )
