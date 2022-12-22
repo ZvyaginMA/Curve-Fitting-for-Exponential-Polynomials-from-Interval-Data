@@ -95,20 +95,25 @@ def example3():
   x_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.1
   x_lb = x_mid - x_rad
   x_ub = x_mid + x_rad
-  # класс распознающего функционала
-  tol1 = Tol(x_lb, x_ub, y_lb, y_ub)
 
-  # Передаём функционал в солвер
-  solver = Solve(tol1)
   quantity_exp = 6
   lb = np.ones(quantity_exp * 2)
   ub = 2 * np.ones(quantity_exp * 2)
-  quantity_starts = 30
+  quantity_starts = 10
+  cost_a = 3.0 * np.ones(quantity_exp)
+  # стоимость выхода из области определения для b
+  cost_b = 3.0 * np.ones(quantity_exp)
+  # класс распознающего функционала
+  tol1 = Tol_with_cost(x_lb, x_ub, y_lb, y_ub, cost_a, cost_b)
+  solver = Solve(tol1)
 
   # Запускаем мультистарт
-  res, curve = solver.multistart(lb, ub, quantity_starts, ralgb5_with_proj ,return_curve_progress=True, return_all_data=False)
+  res, curve = solver.multistart(lb, ub, quantity_starts, ralgb5 ,return_curve_progress=True, return_all_data=False)
   print(*res, sep ="\n")
-  plt.plot(range(len(curve)), curve, c="r")
+
+  plt.scatter(range(len(curve)), curve, c="r")
+  plt.xlabel("Итерации мультистарта")
+  plt.ylabel("Tol")
   plt.show()
   # Рисуем результаты
   fx = lambda a, b, x: np.exp(-x * b) @ (a)

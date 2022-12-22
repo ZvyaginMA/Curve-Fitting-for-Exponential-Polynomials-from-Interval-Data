@@ -1,6 +1,4 @@
 import numpy as np
-from optimization_methods import ralgb5, ralgb5_with_proj
-
 
 class Solve:
   def __init__(self, tol):
@@ -30,12 +28,12 @@ class Solve:
 
     if return_all_data:
       if curv_progress:
-        return best_res, curv_progress, all_res
+        return best_res, np.array(curv_progress), all_res
       else:
         return best_res, all_res
     else:
       if curv_progress:
-        return best_res, curv_progress
+        return best_res, np.array(curv_progress)
       else:
         return best_res
 
@@ -43,3 +41,5 @@ class Solve:
     xr, fr, nit, ncalls, ccode = method(calcfg, x_0) #2.9, 3.9,
     a, b = xr[:len(xr) // 2], xr[len(xr) // 2:]
     return ( - fr, a, b,ccode )
+
+
