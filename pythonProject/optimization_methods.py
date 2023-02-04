@@ -244,3 +244,57 @@ def ralgb5(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h0=1, nh=3,
 
     ccode=4
     return xr, fr, nit, ncalls, ccode
+
+
+
+class Accelerated_ellipsoid_method:
+    def calc(self, calcfg, x0, maxiter=100, tolg=1E-7):
+        n = len(x0)
+        B_k = np.eye(n)
+        r_0 = 10
+        x_k = x0
+        for i in range(maxiter):
+            f, g = calcfg(x_k)
+            norm_g = np.linalg.norm(g)
+            if norm_g < tolg:
+                ccode = 2
+                return ccode
+
+            Bg = B_k.T @ g
+            xsi_k = Bg / np.linalg.norm(Bg)
+
+            if (i == 0):
+                h_k = 1 / (n + 1) * r_0
+                beta_k = np.sqrt((n - 1) / (n + 1))
+            else:
+                xsi_dot = xsi_k.dot(xsi_old)
+                if (h_k / beta_k < - r_k * xsi_dot):
+                    if (xsi_dot ** 2 - 1) < 1E-10:
+                        Hk = - h_k / beta_k * xsi_dot
+                    else:
+                        Hk = - h_k / beta_k * xsi_dot + np.sqrt(r_k ** 2 - (h_k / beta_k) ** 2) * np.sqrt(
+                            1 - xsi_dot ** 2)
+                else:
+                    Hk = r_k
+                h_k = self.__get_beta(r_k, Hk, n)
+                beta_k = self.__get_beta(r_k, Hk, n)
+
+            x_k = x0 - h_k * B_k @ xsi_k
+            R = np.eye(n)
+            B_k = B_k * R
+            if (i == 0):
+                r_k = r_0 * n / np.sqrt(n ** 2 - 1)
+            else:
+                r_k = np.sqrt(r_k ** 2 - (Hk / 2) ** 2 * (1 - beta_k ** 2) ** 2 / beta_k ** 2)
+
+            print(x_k)
+            xsi_old = xsi_k
+
+    def __get_beta(self, r, H, n):
+        return np.sqrt(
+            np.sqrt((n - 1) * (n + 1) + ((2 * r ** 2 - H ** 2) / ((n + 1) * H ** 2)) ** 2) - (2 * r ** 2 - H ** 2) / (
+                        (n + 1) * H ** 2))
+
+    def __get_h(self, r, H, n):
+        return 0.5 * (H - np.sqrt((n - 1) * (n + 1) * H ** 2 + ((2 * r ** 2 - H ** 2) / ((n + 1) * H ** 2)) ** 2) + (
+                    (2 * r ** 2 - H ** 2) / ((n + 1) * H ** 2)))

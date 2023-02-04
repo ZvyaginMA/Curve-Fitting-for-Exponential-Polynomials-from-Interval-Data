@@ -120,3 +120,36 @@ def example3():
 
   graw.draw_interval(fx, res[1], res[2], x_lb, x_ub, y_lb, y_ub)
   plt.show()
+
+
+def example4():
+  """
+    Построение графика демонстрирующего невыпуклость при параметрах из примера 1 из курсовой
+  """
+  y_mid = np.array([2.185, 1.475, 1.2075, 0.98, 0.85, 0.7275])
+  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.6
+  y_lb = y_mid - y_rad
+  y_ub = y_mid + y_rad
+  x_mid = np.array([0.1, 2.0, 4.0, 6.0, 8.0, 10.0])
+  x_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.4
+  x_lb = x_mid - x_rad
+  x_ub = x_mid + x_rad
+
+  tol1 = Tol(x_lb, x_ub, y_lb, y_ub)
+
+  a = np.array([1.7, 0.4])
+
+  def F(U, V, a):
+    z = np.zeros_like(U)
+    for i in range(len(U)):
+      for j in range(len(U[0])):
+        z[i, j] = tol1.tol_value(a, np.array([U[i, j], V[i, j]]))
+    return z
+
+  u = np.linspace(0, 2.5, 100)
+  v = np.linspace(0, 2.5, 100)
+
+  U, V = np.meshgrid(u, v)
+  z = F(U, V, a)
+  cs = plt.contourf(U, V, z, 20)
+  plt.show()

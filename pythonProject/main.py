@@ -1,14 +1,7 @@
-import unittest
-
-import numpy as np
-import matplotlib.pyplot as plt
-from tol_func_mod import Tol_with_cost
-import graw
-from solver import Solve
 from examples.examples import *
-from tests.tests_optimization import *
-from optimization_methods import ralgb5
-
+from optimization_methods import *
 if __name__ == '__main__':
-  example3()
-
+  def calcfg(x):
+    return np.linalg.norm(x), 2 * x
+  met = Accelerated_ellipsoid_method()
+  met.calc(calcfg, np.array([1.0, 1.0]), maxiter=10)
