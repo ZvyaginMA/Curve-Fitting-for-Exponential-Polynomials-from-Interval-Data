@@ -280,7 +280,7 @@ class Accelerated_ellipsoid_method:
                 beta_k = self.__get_beta(r_k, Hk, n)
 
             x_k = x0 - h_k * B_k @ xsi_k
-            R = np.eye(n)
+            R = np.eye(n) - (beta_k - 1) * xsi_k @ xsi_k.T
             B_k = B_k * R
             if (i == 0):
                 r_k = r_0 * n / np.sqrt(n ** 2 - 1)
