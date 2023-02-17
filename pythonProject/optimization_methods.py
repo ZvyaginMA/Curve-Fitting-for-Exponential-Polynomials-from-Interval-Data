@@ -153,7 +153,7 @@ def ralgb5_with_proj(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h
     return xr, fr, nit, ncalls, ccode
 
 
-def ralgb5(calcfg, x0, tol=1e-12, maxiter=2000, alpha=2.3, nsims=30, h0=1, nh=3, q1=0.9, q2=1.1, tolx=1e-12, tolg=1e-12, tolf=1e-12):
+def ralgb5(calcfg, x0, tolx=1e-12, tolg=1e-12, tolf=1e-12, maxiter=2000, alpha=2.3, nsims=30, h0=1, nh=3, q1=0.9, q2=1.1):
     """
         exit_code =
         0 - старт программы
@@ -279,7 +279,7 @@ class Accelerated_ellipsoid_method:
                 h_k = self.__get_beta(r_k, Hk, n)
                 beta_k = self.__get_beta(r_k, Hk, n)
 
-            x_k = x0 - h_k * B_k @ xsi_k
+            x_k = x_k - h_k * B_k @ xsi_k
             R = np.eye(n) - (beta_k - 1) * xsi_k @ xsi_k.T
             B_k = B_k * R
             if (i == 0):
@@ -298,3 +298,37 @@ class Accelerated_ellipsoid_method:
     def __get_h(self, r, H, n):
         return 0.5 * (H - np.sqrt((n - 1) * (n + 1) * H ** 2 + ((2 * r ** 2 - H ** 2) / ((n + 1) * H ** 2)) ** 2) + (
                     (2 * r ** 2 - H ** 2) / ((n + 1) * H ** 2)))
+
+
+class EMShor:
+    def calc(self,calcfg, x0, tolx=1e-12, tolg=1e-12, tolf=1e-12, maxiter= 2000, rad = 10000, intp = 10):
+        dn = float(len(x0))
+        beta = math.sqrt((dn - 1) / (dn + 1))  # row02
+        x = x0
+        radn = rad
+        B = np.eye(len(x))
+        x_old = np.copy(x0)
+        f_old, g1 = calcfg(x)
+        for itn in range(maxiter):
+            f, g1 = calcfg(x)
+            g = B.T @ g1
+            dg = np.linalg.norm(g)
+            if (radn * dg < tolg):
+                ccode = 2
+                return x, f, itn, ccode
+            xi = (1 / dg) * g
+            dx = B @ xi
+            hs = radn / (dn + 1)
+            x -= hs * dx
+            B += (beta - 1) * B * xi * xi.T
+            radn = radn / np.sqrt(1 - 1 / dn) / np.sqrt(1 + 1 / dn)
+            if (itn % intp == 0):  #
+                print(f"itn {itn} f {f}")
+
+            if np.linalg.norm(hs * dx) < tolx:
+                ccode = 3
+                return x, f, itn, ccode
+
+            x_old = x
+            f_old = f
+        ist = 4
