@@ -301,7 +301,7 @@ class Accelerated_ellipsoid_method:
 
 
 class EMShor:
-    def calc(self,calcfg, x0, tolx=1e-12, tolg=1e-12, tolf=1e-12, maxiter= 2000, rad = 10000, intp = 10):
+    def calc(self,calcfg, x0, tolx=1e-12, tolg=1e-12, tolf=1e-12, maxiter= 2000, rad = 5000, intp = 10):
         dn = float(len(x0))
         beta = math.sqrt((dn - 1) / (dn + 1))  # row02
         x = x0
@@ -322,13 +322,9 @@ class EMShor:
             x -= hs * dx
             B += (beta - 1) * B * xi * xi.T
             radn = radn / np.sqrt(1 - 1 / dn) / np.sqrt(1 + 1 / dn)
-            if (itn % intp == 0):  #
-                print(f"itn {itn} f {f}")
 
             if np.linalg.norm(hs * dx) < tolx:
                 ccode = 3
                 return x, f, itn, ccode
-
-            x_old = x
-            f_old = f
-        ist = 4
+        ccode = 4
+        return x, f, itn, ccode

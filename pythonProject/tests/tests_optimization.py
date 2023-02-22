@@ -2,11 +2,10 @@ import numpy as np
 from tol_func import Tol
 from tol_func_mod import Tol_with_cost
 from solver import Solve
-from optimization_methods import ralgb5_with_proj, ralgb5
+from optimization_methods import ralgb5_with_proj, ralgb5, EMShor
 import unittest
 
 class TestSolver(unittest.TestCase):
-
     def test_multistart_1(self):
         # Расчет мультистарта
         y_mid = np.array([2.185, 1.475, 1.2075, 0.98, 0.85, 0.7275])
@@ -70,3 +69,12 @@ class TestSolver(unittest.TestCase):
       self.assertTrue(res[0] > 0.09)  # Проверка ходимости
 
 
+class TestOptimizationMethod(unittest.TestCase):
+    def test_ellipsoid_method_shor1(self):
+        def calcfg(x):
+            a = np.array([1, 0.1])
+            return np.linalg.norm(x * a), 2 * x * a
+
+        opt = EMShor()
+        result = opt.calc(calcfg, np.array([1.0, 2.0]), rad=10)
+        self.assertTrue(result[1] < 1e-5)

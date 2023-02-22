@@ -83,12 +83,12 @@ def example2():
 
 def example3():
   """
-  Пример расчета методом проекции градиента
+  Пример расчета методом штрафной функции
   и визуализации кривой оптимизации
   """
   # Задание входных данных
   y_mid = np.array([2.185, 1.475, 1.2075, 0.98, 0.85, 0.7275])
-  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.15
+  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.2
   y_lb = y_mid - y_rad
   y_ub = y_mid + y_rad
   x_mid = np.array([0.1, 2.0, 4.0, 6.0, 8.0, 10.0])
@@ -111,15 +111,16 @@ def example3():
   res, curve = solver.multistart(lb, ub, quantity_starts, ralgb5 ,return_curve_progress=True, return_all_data=False)
   print(*res, sep ="\n")
 
+  fx = lambda a, b, x: np.exp(-x * b) @ (a)
+
+  graw.draw_interval(fx, res[1], res[2], x_lb, x_ub, y_lb, y_ub)
+  plt.show()
+
   plt.scatter(range(len(curve)), curve, c="r")
   plt.xlabel("Итерации мультистарта")
   plt.ylabel("Tol")
   plt.show()
   # Рисуем результаты
-  fx = lambda a, b, x: np.exp(-x * b) @ (a)
-
-  graw.draw_interval(fx, res[1], res[2], x_lb, x_ub, y_lb, y_ub)
-  plt.show()
 
 
 def example4():
@@ -127,7 +128,7 @@ def example4():
     Построение графика демонстрирующего невыпуклость при параметрах из примера 1 из курсовой
   """
   y_mid = np.array([2.185, 1.475, 1.2075, 0.98, 0.85, 0.7275])
-  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.6
+  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.3
   y_lb = y_mid - y_rad
   y_ub = y_mid + y_rad
   x_mid = np.array([0.1, 2.0, 4.0, 6.0, 8.0, 10.0])
@@ -153,3 +154,45 @@ def example4():
   z = F(U, V, a)
   cs = plt.contourf(U, V, z, 20)
   plt.show()
+
+
+def example5():
+  """
+  Пример расчета методом штрафной функции
+  и визуализации кривой оптимизации
+  """
+  # Задание входных данных
+  y_mid = np.array([2.185, 1.475, 1.2075, 0.98, 0.85, 0.7275])
+  y_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.35
+  y_lb = y_mid - y_rad
+  y_ub = y_mid + y_rad
+  x_mid = np.array([0.1, 2.0, 4.0, 6.0, 8.0, 10.0])
+  x_rad = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]) * 0.1
+  x_lb = x_mid - x_rad
+  x_ub = x_mid + x_rad
+
+  quantity_exp = 6
+  lb = np.ones(quantity_exp * 2)
+  ub = 2 * np.ones(quantity_exp * 2)
+  quantity_starts = 10
+  cost_a = 3.0 * np.ones(quantity_exp)
+  # стоимость выхода из области определения для b
+  cost_b = 3.0 * np.ones(quantity_exp)
+  # класс распознающего функционала
+  tol1 = Tol_with_cost(x_lb, x_ub, y_lb, y_ub, cost_a, cost_b)
+  solver = Solve(tol1)
+
+  # Запускаем мультистарт
+  res, curve = solver.multistart(lb, ub, quantity_starts, ralgb5 ,return_curve_progress=True, return_all_data=False)
+  print(*res, sep ="\n")
+
+  fx = lambda a, b, x: np.exp(-x * b) @ (a)
+
+  graw.draw_interval(fx, res[1], res[2], x_lb, x_ub, y_lb, y_ub)
+  plt.show()
+
+  plt.scatter(range(len(curve)), curve, c="r")
+  plt.xlabel("Итерации мультистарта")
+  plt.ylabel("Tol")
+  plt.show()
+  # Рисуем результаты
