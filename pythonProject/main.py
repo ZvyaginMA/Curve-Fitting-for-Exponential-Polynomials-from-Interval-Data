@@ -13,7 +13,7 @@ def AEM():
 
 
 if __name__ == '__main__':
-  example3()
+  example6()
 
 
 

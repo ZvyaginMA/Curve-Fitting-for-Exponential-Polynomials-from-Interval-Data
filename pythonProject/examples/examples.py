@@ -196,3 +196,53 @@ def example5():
   plt.ylabel("Tol")
   plt.show()
   # Рисуем результаты
+
+
+def example6():
+    # Задание входных данных
+  y_mid = np.array([2.51, 2.04, 1.67, 1.37, 1.12, 0.93, 0.77, 0.64, 0.53, 0.45, 0.38, 0.32, 0.27, 0.23, 0.20, 0.17, 0.15, 0.13, 0.11, 0.10, 0.09,0.08, 0.07, 0.06])
+  y_rad = np.ones(24) * 0.005
+  y_lb = y_mid - y_rad
+  y_ub = y_mid + y_rad
+  x_mid = np.array(range(0, 24, 1)) * 0.05
+  x_rad = np.ones(24) * 0.0
+  x_lb = x_mid - x_rad
+  x_ub = x_mid + x_rad
+
+  quantity_exp = 4
+  lb = np.ones(quantity_exp * 2) * 0.000001
+  ub = 20 *  np.ones(quantity_exp * 2)
+  quantity_starts = 10
+  cost_a = 10.0 * np.ones(quantity_exp)
+  # стоимость выхода из области определения для b
+  cost_b = 10.0 * np.ones(quantity_exp)
+  # класс распознающего функционала
+  tol1 = Tol_with_cost(x_lb, x_ub, y_lb, y_ub, cost_a, cost_b)
+  solver = Solve(tol1)
+
+  f = lambda x: np.array([0.0951, 0.8607, 1.5576]) @ np.exp(x * np.array([-1.0, -3.0, -5.0]))
+  fm = [f(x) for x in x_mid]
+
+  """
+  0.0016801321866205532
+[2.08404657e+00 4.57120604e-12 4.25673560e-01]
+[4.60646509 0.51699632 1.85283244]
+1
+
+0.0016801321866264374
+[2.08404657 0.42567356]
+[4.60646509 1.85283244]
+1
+
+0.0016801321866166674
+[6.68499642e-11 1.75199326e-06 2.08404657e+00 4.25673560e-01]
+[3.92780507e+00 3.79829049e+03 4.60646509e+00 1.85283244e+00]
+1
+  """
+
+  # Запускаем мультистарт
+  res, curve = solver.multistart(lb, ub, quantity_starts, ralgb5, return_curve_progress=True, return_all_data=False)
+  print(*res, sep="\n")
+
+
+  pass
