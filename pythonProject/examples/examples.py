@@ -209,6 +209,20 @@ def example6():
   x_lb = x_mid - x_rad
   x_ub = x_mid + x_rad
 
+  for i in range(12):
+    print(f"{i + 1 } & {x_mid[i]}& {y_mid[i]} & {i + 1 + 12} & {x_mid[i+ 12]}& {y_mid[i+ 12]}")
+
+  tol = Tol(x_lb, x_ub, y_lb, y_ub)
+  a_t = np.array([0.0951,0.8607,1.5576 ])
+  b_t = np.array([1.0, 3.0, 5.0])
+  res1 = tol.tol_value(a_t, b_t)
+  a_l = np.array([2.202, 0.305])
+  b_l = np.array([4.45, 1.58])
+  res2 = tol.tol_value(a_l, b_l)
+  a_l = np.array(  [2.08404657e+00, 4.57120604e-12, 4.25673560e-01])
+  b_l = np.array(  [4.60646509, 0.51699632, 1.85283244])
+  res3 = tol.tol_value(a_l, b_l)
+  print(res1, res2, res3)
   quantity_exp = 4
   lb = np.ones(quantity_exp * 2) * 0.000001
   ub = 20 *  np.ones(quantity_exp * 2)
@@ -246,3 +260,5 @@ def example6():
 
 
   pass
+
+
