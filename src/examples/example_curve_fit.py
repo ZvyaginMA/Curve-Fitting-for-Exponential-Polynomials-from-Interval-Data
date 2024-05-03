@@ -6,6 +6,7 @@ import plot.plot_interval as pi
 import pandas as pd
 
 def ex1():
+    # Задаем данные
     y_mid = np.array([2.51, 2.04, 1.67, 1.37, 1.12, 0.93])
     y_rad = np.ones(6) * 0.9
     y_lb = y_mid - y_rad
@@ -15,10 +16,13 @@ def ex1():
     x_lb = x_mid - x_rad
     x_ub = x_mid + x_rad
 
+    # Создаем модель и задаем количество экспонент
     model = ExpModel(quantity_exp= 2)
+    # Расчет
     model.Fit(x_lb, x_ub, y_lb, y_ub)
+    # Выводим результат
     print(model.tol_value , model.a_coef , model.b_coef, model.min_rad_y)
-    pi.draw_interval_and_f(model.Predict, x_lb, x_ub, y_lb, y_ub)
+    pi.draw_interval_and_f([model.Predict], x_lb, x_ub, y_lb, y_ub)
     pi.show()
     pass
 
@@ -34,7 +38,6 @@ def ex2():
     x_ub = x_mid + x_rad
     """a_max = np.array([1.8263335,  0.68420739])
     b_max = np.array([0.24085562, 0.11819026])"""
-    
 
     model = ExpModel(quantity_exp= 2)
     model.Fit(x_lb, x_ub, y_lb, y_ub, cost_a=0)

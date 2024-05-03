@@ -9,22 +9,32 @@ from curve_fitting.solver import Solver
 from curve_fitting.optimization import ralgb5
 
 class ex:
+    """
+        Примеры восстановления зависимостей вида полиномов из экспонент по интервальным данным с дополнительными линейными слагаемыми.
+    """
 
     @staticmethod
     def p1():
         """
             Пример со степенным слагаемым
         """ 
+        # Данные
         x_m = np.array([0.12, 0.2 , 0.6 , 0.7 , 0.9 , 1.4 , 1.6 , 1.9 , 2.4 ])
         y_lb = np.array([ 2.564 ,  1.0253,  0.2068,  0.1517,  0.0753, -0.017 , -0.0343,-0.0501, -0.0623])
         y_ub = np.array([2.704 , 1.1653, 0.3468, 0.2917, 0.2153, 0.123 , 0.1057, 0.0899, 0.0777])
 
+        #Приближаемая функция 
         f1 = lambda x: 0.01 * x**-2.5 + 0.8 * np.exp(-2 * x)
+        
+        #Количество экспонент
         quantity_exp = 1
         
-        # класс распознающего функционала
+        # Дополнительное линейное слагаемое 
         f = [lambda x: x**(-2.5)]
+
+        # Распознающий функционал 
         tol = TolLinMixin(x_m , x_m , y_lb, y_ub, 2* np.ones(quantity_exp),3* np.ones(quantity_exp), 4*np.ones(1), f )
+        
         # Передаём функционал в солвер
         solver = Solver(tol)
 
@@ -36,12 +46,17 @@ class ex:
         # Запускаем мультистарт 
         # {'best_res': {'func_val': 0.06953377113648186, 'a': array([0.79718602]), 'b': array([1.99189043]), 'c': array([0.01001037]), 'code': 3}}
         res = solver.multistart(lb, ub, quantity_starts, ralgb5, return_all_data=False)
-        f_res = lambda x: 0.79718602 * np.exp(- 1.99189043 * x) + 0.01001037* x**(-2.5)
+        a = res["best_res"]["a"]
+        b = res["best_res"]["b"]
+        c = res["best_res"]["c"]
 
-        pi.draw_interval_and_f([f1], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
+        # Результат
+        f_res = lambda x: a * np.exp(- b * x) + c[0]* x**(-2.5)
+
+        print(res)
+        pi.draw_interval_and_f([f_res], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
         pi.show()
 
-        pass
 
     @staticmethod
     def p2():
@@ -70,9 +85,13 @@ class ex:
         # Запускаем мультистарт solver.multistart(lb, ub, quantity_starts, ralgb5, return_all_data=False)
         #  {'best_res': {'func_val': 0.06896398598907982, 'a': array([1.80237325]), 'b': array([2.01527691]), 'c': array([0.8037996]), 'code': 3}}
         res = solver.multistart(lb, ub, quantity_starts, ralgb5, return_all_data=False)
-        f_res = lambda x: 0.80763673 * np.exp(- 1.99672163 * x) + 0.00992973* x**(-2.5)
-        res
-        pi.draw_interval_and_f([f2], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
+        a = res["best_res"]["a"]
+        b = res["best_res"]["b"]
+        c = res["best_res"]["c"]
+        f_res = lambda x: c[0] * np.exp(-(x - 1)**2)  + a * np.exp(-b * x)
+
+        print(res)
+        pi.draw_interval_and_f([f_res], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
         pi.show()
 
         pass
@@ -108,12 +127,9 @@ class ex:
         b = res["best_res"]["b"]
         c = res["best_res"]["c"]
         f_res = lambda x: a @ np.exp(- b * x) + c[0]* f[0](x)
-        a = res["best_res"]["a"]
-        b = res["best_res"]["b"]
-        c = res["best_res"]["c"]
-        f_res = lambda x: a @ np.exp(- b * x) + c[0]* f[0](x)
 
-        pi.draw_interval_and_f([f3], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
+        print(res)
+        pi.draw_interval_and_f([f_res], x_m - 0.01, x_m + 0.01, y_lb, y_ub)
         pi.show()
 
         pass
@@ -127,4 +143,5 @@ class ex:
 
         model = ExpModel(quantity_exp= 2)
         model.Fit(x_mid, x_mid, y_lb, y_ub, cost_a=0)
+        print(model)
         pass
